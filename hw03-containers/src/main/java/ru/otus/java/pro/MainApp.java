@@ -6,6 +6,12 @@ public class MainApp {
         Box<Orange> box2 = new Box<>();
         box1.addFruit(new Apple());
         box2.addFruit(new Orange());
-        box2.transferIntoAnother(box1);
+        try {
+            box2.transferIntoAnother(box1);
+            box2.transferIntoAnother(null);
+        }
+        catch (IllegalStateException e) {
+            System.out.println("Exception: " + e);
+        }
     }
 }

@@ -1,9 +1,9 @@
 package ru.otus.java.pro;
 
 public class Fruit {
-    private static final Integer weight = 0;
+    private static final Integer WEIGHT = 0;
 
     public Integer getWeight() {
-        return weight;
+        return WEIGHT;
     }
 }

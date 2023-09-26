@@ -1,9 +1,10 @@
 package ru.otus.java.pro;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Box<E extends Fruit> {
-    private final ArrayList<E> fruits = new ArrayList<>();
+    private final List<E> fruits = new ArrayList<>();
 
     public void addFruit(E fruit) {
         fruits.add(fruit);
@@ -19,7 +20,11 @@ public class Box<E extends Fruit> {
         return weight().equals(boxToCompare.weight());
     }
 
-    public void transferIntoAnother(Box<? super E> anotherBox) {
+    public void transferIntoAnother(Box<? super E> anotherBox) throws IllegalStateException {
+        if (anotherBox == null) {
+            throw new IllegalStateException("Destination box should not be null");
+        }
+
         if (anotherBox.equals(this)) {
             return;
         }
