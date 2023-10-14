@@ -6,9 +6,9 @@ import ru.otus.java.pro.annotations.Test;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class UnitTestsRunner {
     public static final String ANSI_RESET = "\u001B[0m";
@@ -33,12 +33,26 @@ public class UnitTestsRunner {
         }
     }
 
+    private static String getPrettyRootCauseStackTrace(Exception exception) {
+        Throwable exceptionToPrint = exception;
+        Optional<Throwable> rootCause = Stream.iterate(exception, Throwable::getCause)
+                .filter(element -> element.getCause() == null)
+                .findFirst();
+        if (rootCause.isPresent()) {
+            exceptionToPrint = rootCause.get();
+        }
+        return ANSI_RED + exceptionToPrint + ANSI_RESET + "\nat " +
+                Arrays.stream(exceptionToPrint.getStackTrace())
+                    .map(StackTraceElement::toString)
+                    .collect(Collectors.joining("\nat "));
+    }
+
     private static Object createTestsClassInstance(Class<?> testsClass) {
         Object testsClassInstance = null;
         try {
             testsClassInstance = testsClass.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(getPrettyRootCauseStackTrace(e));
         }
         return testsClassInstance;
     }
@@ -49,7 +63,7 @@ public class UnitTestsRunner {
                 method.invoke(testsClassInstance);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(getPrettyRootCauseStackTrace(e));
             return false;
         }
         return true;
@@ -62,7 +76,8 @@ public class UnitTestsRunner {
                 method.invoke(testsClassInstance);
                 result = true;
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println(ANSI_RED + method.getName() + ": failed" + ANSI_RESET);
+                System.out.println(getPrettyRootCauseStackTrace(e));
             }
         }
         runMethodsBatch(testsClassInstance, methodsMap.get(After.class));
@@ -86,7 +101,7 @@ public class UnitTestsRunner {
         try {
             testsClass = UnitTestsRunner.class.getClassLoader().loadClass(testsClassName);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            System.out.println(getPrettyRootCauseStackTrace(e));
             return;
         }
 
@@ -101,7 +116,7 @@ public class UnitTestsRunner {
                     try {
                         validateMethodAnnotations(method, annotation);
                     } catch (IllegalStateException e) {
-                        e.printStackTrace();
+                        System.out.println(getPrettyRootCauseStackTrace(e));
                         return;
                     }
                     methodsMap.get(annotation).add(method);
