@@ -7,6 +7,7 @@ import ru.otus.java.pro.annotations.Test;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -14,6 +15,8 @@ public class UnitTestsRunner {
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_GREEN = "\u001B[32m";
+
+    public static final Logger log = Logger.getLogger(UnitTestsRunner.class.getName());
 
 
     private static final List<Class<? extends Annotation>> SUPPORTED_ANNOTATIONS = List.of(After.class, Before.class, Test.class);
@@ -52,7 +55,7 @@ public class UnitTestsRunner {
         try {
             testsClassInstance = testsClass.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
-            System.out.println(getPrettyRootCauseStackTrace(e));
+            log.info(getPrettyRootCauseStackTrace(e));
         }
         return testsClassInstance;
     }
@@ -63,7 +66,7 @@ public class UnitTestsRunner {
                 method.invoke(testsClassInstance);
             }
         } catch (Exception e) {
-            System.out.println(getPrettyRootCauseStackTrace(e));
+            log.info(getPrettyRootCauseStackTrace(e));
             return false;
         }
         return true;
@@ -76,8 +79,8 @@ public class UnitTestsRunner {
                 method.invoke(testsClassInstance);
                 result = true;
             } catch (Exception e) {
-                System.out.println(ANSI_RED + method.getName() + ": failed" + ANSI_RESET);
-                System.out.println(getPrettyRootCauseStackTrace(e));
+                log.info(ANSI_RED + method.getName() + ": failed" + ANSI_RESET);
+                log.info(getPrettyRootCauseStackTrace(e));
             }
         }
         runMethodsBatch(testsClassInstance, methodsMap.get(After.class));
@@ -101,7 +104,7 @@ public class UnitTestsRunner {
         try {
             testsClass = UnitTestsRunner.class.getClassLoader().loadClass(testsClassName);
         } catch (ClassNotFoundException e) {
-            System.out.println(getPrettyRootCauseStackTrace(e));
+            log.info(getPrettyRootCauseStackTrace(e));
             return;
         }
 
@@ -116,7 +119,7 @@ public class UnitTestsRunner {
                     try {
                         validateMethodAnnotations(method, annotation);
                     } catch (IllegalStateException e) {
-                        System.out.println(getPrettyRootCauseStackTrace(e));
+                        log.info(getPrettyRootCauseStackTrace(e));
                         return;
                     }
                     methodsMap.get(annotation).add(method);
@@ -127,12 +130,12 @@ public class UnitTestsRunner {
         int successes = runTestMethods(testsClass, methodsMap);
         int total = methodsMap.get(Test.class).size();
         if (successes != total) {
-            System.out.println(ANSI_RED + "!!! FAILED !!!" + ANSI_RESET);
+            log.info(ANSI_RED + "!!! FAILED !!!" + ANSI_RESET);
         } else {
-            System.out.println(ANSI_GREEN + "PASSED" + ANSI_RESET);
+            log.info(ANSI_GREEN + "PASSED" + ANSI_RESET);
         }
-        System.out.println("Total methods: " + total);
-        System.out.println("Successful runs: " + successes);
-        System.out.println("Failed: " + (total - successes));
+        log.info("Total methods: " + total);
+        log.info("Successful runs: " + successes);
+        log.info("Failed: " + (total - successes));
     }
 }

@@ -4,25 +4,28 @@ import ru.otus.java.pro.annotations.After;
 import ru.otus.java.pro.annotations.Before;
 import ru.otus.java.pro.annotations.Test;
 
+import java.util.logging.Logger;
+
 public class ExampleTestsClass {
+    private static final Logger log = Logger.getLogger(ExampleTestsClass.class.getName());
     @Before
     void beforeMethod() {
-        System.out.println("Before method");
+        log.info("Before method");
     }
 
     @After
     void afterMethod() {
-        System.out.println("After method");
+        log.info("After method");
     }
 
     @Test
     void passingTestMethod() {
-        System.out.println("Passing test method");
+        log.info("Passing test method");
     }
 
     @Test
     void failingTestMethod() {
-        System.out.println("Failing test method");
+        log.info("Failing test method");
         throw new AssertionError("Test assertion error");
     }
 }
