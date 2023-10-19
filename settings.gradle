@@ -2,4 +2,6 @@ rootProject.name = 'otus-java-course'
 include 'hw01-gradle'
 include 'hw03-containers'
 include 'hw06-annotations'
+include 'hw06-annotation-processor'
+include 'hw06-annotation-processor-test'
 
