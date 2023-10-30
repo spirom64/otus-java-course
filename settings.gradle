@@ -4,4 +4,5 @@ include 'hw03-containers'
 include 'hw06-annotations'
 include 'hw06-annotation-processor'
 include 'hw06-annotation-processor-test'
+include 'hw10-oop'
 
