@@ -5,4 +5,5 @@ include 'hw06-annotations'
 include 'hw06-annotation-processor'
 include 'hw06-annotation-processor-test'
 include 'hw10-oop'
+include 'hw15-serialization'
 
