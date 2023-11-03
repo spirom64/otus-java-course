@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option java_outer_classname = "ConvertedMessagesProtos";
+option java_package = "ru.otus.java.pro.protobuf";
+
+message ConvertedMessage {
+    string chat_identifier = 1;
+    google.protobuf.Timestamp send_date = 2;
+    string members_last = 3;
+    string message_text = 4;
+}
+
+message MessagesByPhoneNumber {
+    string belong_number = 1;
+    repeated ConvertedMessage messages = 2;
+}
+
+message ConvertedMessages {
+    repeated MessagesByPhoneNumber messages = 1;
+}
